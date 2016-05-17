@@ -27,5 +27,6 @@ public class AzureAppid {
     /**
      *
      */
-    public static final String AZURE_APPID = System.getProperty("azureappid");
+//    public static final String AZURE_APPID = System.getProperty("azureappid");
+    public static final String AZURE_APPID = "Rh/KLeo3cruEXlB1FRnM3m4obChxT8bM+a9fVyqk3Xo=";
 }

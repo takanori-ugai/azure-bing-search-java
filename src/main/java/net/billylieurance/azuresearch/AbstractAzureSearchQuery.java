@@ -41,12 +41,15 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.HttpClient;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -500,14 +503,31 @@ public abstract class AbstractAzureSearchQuery<ResultT> {
      * Next step would be to get the results with {@link getQueryResult()}
      */
     public void doQuery() {
-        DefaultHttpClient client = new DefaultHttpClient();
+	HttpHost proxy = new HttpHost("rep.proxy.nic.fujitsu.com", 8080);
+//	CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//	credsProvider.setCredentials(
+//		new AuthScope(proxy),
+//		new UsernamePasswordCredentials("ugaimachine", "1796041152"));
+//        RequestConfig config = RequestConfig.custom()
+//		.setProxy(proxy)
+//		.build();
+//	HttpClient client = HttpClients.custom()
+//		.setDefaultCredentialsProvider(credsProvider)
+//		.setDefaultRequestConfig(config)
+//		.build();
 
-        client.getCredentialsProvider()
-                .setCredentials(
+        DefaultHttpClient client = new DefaultHttpClient();
+	client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+        CredentialsProvider credsProvider = client.getCredentialsProvider() ;
+        credsProvider.setCredentials(
                         new AuthScope(_targetHost.getHostName(),
                                 _targetHost.getPort()),
                         new UsernamePasswordCredentials(this.getAppid(), this
                                 .getAppid()));
+        credsProvider.setCredentials(
+		new AuthScope(proxy),
+		new UsernamePasswordCredentials("ugaimachine", "1796041152"));
 
         URI uri;
         try {
